@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mulheres na computação</title>
+  <link href="https://fonts.googleapis.com/css?family=Raleway:200,600" rel="stylesheet">
+  <script data-require="d3@4.0.0" data-semver="4.0.0" src="https://d3js.org/d3.v4.js"></script>
+  <style media="screen">
+    body {
+      font-family: 'Raleway', sans-serif;
+      font-size: 14px;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+      background-image: linear-gradient(90deg,#673BB7,#312247);
+    }
+    a:link, a:visited {
+      color: #fff;
+      font-weight: 600;
+      text-decoration: none;
+    }
+    a:active, a:hover {
+      text-decoration: underline;
+      color: #E91D62;
+    }
+    h1, h2 {
+      margin: 0;
+      padding: 0;
+      font-weight: 200;
+    }
+    h1 {
+      font-size: 38px;
+      line-height: 38px;
+    }
+    @media (min-width: 576px) {
+      h1 {
+        font-size: 54px;
+        line-height: 54px;
+      }
+    }
+    @media (min-width: 992px) {
+      h1 {
+        font-size: 64px;
+        line-height: 64px;
+      }
+    }
+    header {
+      margin-top: 50px;
+    }
+    .container {
+      margin-right: auto;
+      margin-left: auto;
+      padding-right: 28px;
+      padding-left: 28px;
+    }
+    @media (min-width: 576px) {
+      .container {
+        max-width: 540px;
+      }
+    }
+    @media (min-width: 768px) {
+      .container {
+        max-width: 720px;
+      }
+    }
+    @media (min-width: 992px) {
+      .container {
+        max-width: 960px;
+      }
+    }
+    @media (min-width: 1200px) {
+      .container {
+        max-width: 1140px;
+      }
+    }
+    .text-center {
+      text-align: center;
+    }
+    #chart {
+      padding-right: 5%;
+      padding-left: 5%;
+      margin-right: auto;
+      margin-left: auto;
+    }
+    circle {
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <header class="container">
+    <h1>Mulheres na computação</h1>
+    <h2>Algumas das mulheres que marcaram a história da computação</h2>
+  </header>
+  <main class="container">
+    <div id="chart"></div>
+  </main>
+  <footer class="container">Criado por <a href="https://github.com/jeffersonrpn" target="_blank">Jeff</a>. Dados coletados da <a href="https://en.wikipedia.org/wiki/Category:Women_computer_scientists" target="_blank">Wikipedia</a></footer>
+  <script type="text/javascript">
+    var
+      width = 800,
+      height = 800,
+      start = 0,
+      end = 4,
+      numSpirals = 1,
+      distanceBetweenSpirals = 120,
+      circleRadius = 5,
+      collisionRadius = circleRadius + 0.2,
+      margin = { top: 50, bottom: 5, left: 5, right: 5 },
+      color = "#FFFFFF",
+      colorB = "#E91D62";
+    var
+      viewBox = {
+        width: width + margin.right + margin.left,
+        height: height + margin.left + margin.right
+      }
+    var timeFormat = d3.timeFormat("%Y");
+
+    var theta = function(r) {
+      return numSpirals * Math.PI * r;
+    };
+
+    var r = d3.min([width, height]) / 4;
+
+    var radius  = d3.scaleLinear().domain([start, end]).range([0, r]);
+    var radius2 = d3.scaleLinear().domain([start, end]).range([0, r+distanceBetweenSpirals]);
+    var radiusR = d3.scaleLinear().domain([start, end]).range([0, r+(distanceBetweenSpirals/2)]);
+
+    var svg = d3.select("#chart").append("svg")
+      .attr("viewBox", "0 0 "+viewBox.width+" "+viewBox.height)
+      .attr("width", "100%");
+    var g = svg.append("g")
+      .attr("transform", "translate(" + (viewBox.width * 0.5) + "," + (viewBox.height * 0.5) + ")")
+    var g2 = svg.append("g")
+      .attr("transform", "translate(" + (viewBox.width * 0.5) + "," + (viewBox.height * 0.5) + ")")
+
+    var points = d3.range(start, end + 0.001, (end - start) / 1000);
+
+    var spiral  = d3.radialLine().curve(d3.curveCardinal).angle(theta).radius(radius);
+    var spiral2 = d3.radialLine().curve(d3.curveCardinal).angle(theta).radius(radius2);
+    var spiralR = d3.radialLine().curve(d3.curveCardinal).angle(theta).radius(radiusR);
+
+    var path = g.append("path")
+      .datum(points)
+      .attr("id", "spiral")
+      .attr("d", spiral)
+      .style("fill", "none")
+      .style("stroke", color)
+      .style("stroke-width", "2");
+
+    var path2 = g.append("path")
+      .datum(points)
+      .attr("id", "spiral")
+      .attr("d", spiral2)
+      .style("fill", "none")
+      .style("stroke", color)
+      .style("stroke-width", "2");
+
+    var pathR = g.append("path")
+      .datum(points)
+      .attr("id", "spiral")
+      .attr("d", spiralR)
+      .style("fill", "none")
+      .style("stroke", "none")
+      .style("opacity", "0");
+
+    var spiralLength = pathR.node().getTotalLength(),
+        N = 365,
+        barWidth = (spiralLength / N) - 1;
+
+    d3.csv('data.csv', function(d) {
+      return {
+        date: new Date(+d.ano, 0, 1),
+        year: +d.ano,
+        name: d.nome
+      }
+    }, function(data) {
+
+      var min = d3.min(data, function(d) { return d.date; });
+      var max = d3.max(data, function(d) { return d.date; });
+
+      var timeScale = d3.scaleTime()
+        .domain([min, max])
+        .range([0, spiralLength]);
+      var simulation = d3.forceSimulation(data)
+        .force("x", d3.forceX(function(d) { return pathR.node().getPointAtLength(timeScale(d.date)).x; }))
+        .force("y", d3.forceY(function(d) { return pathR.node().getPointAtLength(timeScale(d.date)).y; }))
+        .force("collide", d3.forceCollide(collisionRadius))
+        .stop();
+      for (var i = 0; i < data.length; ++i) simulation.tick();
+
+      g.selectAll("circle")
+        .data(data)
+        .enter()
+        .append("circle")
+        .attr("r", circleRadius)
+        .attr("fill", color)
+        .attr("stroke", "none")
+        .attr("class", function(d) { return "ano-"+d.year; })
+        .attr("cx", function(d) { return d.x; })
+        .attr("cy", function(d) {return d.y; })
+        .on('mouseover', function(d) {
+          d3.select('.text')
+            .text(d.name+", "+d.year)
+            .attr('display', 'inline');
+          d3.select(this).transition()
+            .duration("200")
+            .attr("fill", colorB)
+            .attr("r", circleRadius*2);
+        })
+        .on('mouseout', function(d) {
+          d3.select('.text').attr('display', 'none');
+          d3.select(this).transition()
+            .duration("200")
+            .attr("fill", color)
+            .attr("r", circleRadius);
+        });
+
+      g.append("text")
+        .attr("stroke", "none")
+        .attr("font-size", "32px")
+        .attr("text-anchor", "middle")
+        .attr("alignment-baseline", "hanging")
+        .attr("class", "text")
+        .attr("fill", color)
+        .attr('x', 0)
+        .attr('y', -viewBox.height*0.45);
+    });
+  </script>
+</body>
+</html>
