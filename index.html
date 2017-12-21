@@ -5,12 +5,17 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Mulheres na computação</title>
-  <link href="https://fonts.googleapis.com/css?family=Raleway:200,600" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Raleway:300,700" rel="stylesheet">
   <script data-require="d3@4.0.0" data-semver="4.0.0" src="https://d3js.org/d3.v4.js"></script>
   <style media="screen">
+    html {
+      margin: 0;
+      padding: 0;
+    }
     body {
       font-family: 'Raleway', sans-serif;
       font-size: 14px;
+      font-weight: 300;
       color: #fff;
       margin: 0;
       padding: 0;
@@ -18,8 +23,8 @@
     }
     a:link, a:visited {
       color: #fff;
-      font-weight: 600;
       text-decoration: none;
+      font-weight: 700;
     }
     a:active, a:hover {
       text-decoration: underline;
@@ -33,6 +38,11 @@
     h1 {
       font-size: 38px;
       line-height: 38px;
+      font-weight: 700;
+    }
+    h2 {
+      font-size: 18px;
+      margin-top: 5px;
     }
     @media (min-width: 576px) {
       h1 {
@@ -47,13 +57,25 @@
       }
     }
     header {
-      margin-top: 50px;
+      margin-top: 15px;
+    }
+    @media (min-width: 992px) {
+      header {
+        margin-top: 50px;
+      }
+    }
+    footer {
+      margin-bottom: 15px;
     }
     .container {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
       margin-right: auto;
       margin-left: auto;
-      padding-right: 28px;
-      padding-left: 28px;
+      padding-right: 15px;
+      padding-left: 15px;
     }
     @media (min-width: 576px) {
       .container {
@@ -78,11 +100,9 @@
     .text-center {
       text-align: center;
     }
-    #chart {
-      padding-right: 5%;
-      padding-left: 5%;
-      margin-right: auto;
-      margin-left: auto;
+    .chart-wrapper {
+      max-width: 800px;
+      margin: auto;
     }
     circle {
       cursor: pointer;
@@ -90,14 +110,18 @@
   </style>
 </head>
 <body>
-  <header class="container">
-    <h1>Mulheres na computação</h1>
-    <h2>Algumas das mulheres que marcaram a história da computação</h2>
-  </header>
-  <main class="container">
-    <div id="chart"></div>
-  </main>
-  <footer class="container">Criado por <a href="https://github.com/jeffersonrpn" target="_blank">Jeff</a>. Dados coletados da <a href="https://en.wikipedia.org/wiki/Category:Women_computer_scientists" target="_blank">Wikipedia</a></footer>
+  <div class="container">
+    <header class="text-center">
+      <h1>Mulheres na computação</h1>
+      <h2>Algumas das mulheres que marcaram a história da computação</h2>
+    </header>
+    <main>
+      <div class="chart-wrapper">
+        <div id="chart"></div>
+      </div>
+    </main>
+    <footer>Criado por <a href="https://github.com/jeffersonrpn" target="_blank">Jeff</a>. Dados coletados da <a href="https://en.wikipedia.org/wiki/Category:Women_computer_scientists" target="_blank">Wikipedia</a></footer>
+  </div>
   <script type="text/javascript">
     var
       width = 800,
@@ -108,7 +132,7 @@
       distanceBetweenSpirals = 120,
       circleRadius = 5,
       collisionRadius = circleRadius + 0.2,
-      margin = { top: 50, bottom: 5, left: 5, right: 5 },
+      margin = { top: 100, bottom: 5, left: 5, right: 5 },
       color = "#FFFFFF",
       colorB = "#E91D62";
     var
