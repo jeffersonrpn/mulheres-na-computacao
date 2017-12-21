@@ -134,7 +134,7 @@
       collisionRadius = circleRadius + 0.2,
       margin = { top: 100, bottom: 5, left: 5, right: 5 },
       color = "#FFFFFF",
-      colorB = "#E91D62";
+      colorB = "#9c28b1";
     var
       viewBox = {
         width: width + margin.right + margin.left,
@@ -215,16 +215,16 @@
         .stop();
       for (var i = 0; i < data.length; ++i) simulation.tick();
 
-      g.selectAll("circle")
+      var circles = g.selectAll("circle")
         .data(data)
         .enter()
         .append("circle")
         .attr("r", circleRadius)
-        .attr("fill", color)
+        .attr("fill", colorB)
         .attr("stroke", "none")
         .attr("class", function(d) { return "ano-"+d.year; })
-        .attr("cx", function(d) { return d.x; })
-        .attr("cy", function(d) {return d.y; })
+        .attr("cx", timeScale(min))
+        .attr("cy", timeScale(min))
         .on('mouseover', function(d) {
           d3.select('.text')
             .text(d.name+", "+d.year)
@@ -241,6 +241,11 @@
             .attr("fill", color)
             .attr("r", circleRadius);
         });
+
+      circles.transition().duration(1500).delay(function(d, i) { return i*20; })
+        .attr("fill", color)
+        .attr("cx", function(d) { return d.x; })
+        .attr("cy", function(d) {return d.y; });
 
       g.append("text")
         .attr("stroke", "none")
