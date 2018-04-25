@@ -104,7 +104,7 @@
       max-width: 800px;
       margin: auto;
     }
-    circle {
+    .circle {
       cursor: pointer;
     }
   </style>
@@ -132,7 +132,7 @@
       distanceBetweenSpirals = 120,
       circleRadius = 5,
       collisionRadius = circleRadius + 0.2,
-      margin = { top: 100, bottom: 5, left: 5, right: 5 },
+      margin = { top: 100, bottom: 50, left: 5, right: 5 },
       color = "#FFFFFF",
       colorB = "#9c28b1";
     var
@@ -205,9 +205,8 @@
       var min = d3.min(data, function(d) { return d.date; });
       var max = d3.max(data, function(d) { return d.date; });
 
-      var timeScale = d3.scaleTime()
-        .domain([min, max])
-        .range([0, spiralLength]);
+      var timeScale = d3.scaleTime().domain([min, max]).range([0, spiralLength]);
+      // var timeScale2 = d3.scaleTime().domain([min, max]).range([-width*0.5 + margin.right, width*0.5 - margin.left*2]);
       var simulation = d3.forceSimulation(data)
         .force("x", d3.forceX(function(d) { return pathR.node().getPointAtLength(timeScale(d.date)).x; }))
         .force("y", d3.forceY(function(d) { return pathR.node().getPointAtLength(timeScale(d.date)).y; }))
@@ -215,16 +214,16 @@
         .stop();
       for (var i = 0; i < data.length; ++i) simulation.tick();
 
-      var circles = g.selectAll("circle")
+      var circles = g.selectAll(".circle")
         .data(data)
         .enter()
         .append("circle")
         .attr("r", circleRadius)
         .attr("fill", colorB)
         .attr("stroke", "none")
-        .attr("class", function(d) { return "ano-"+d.year; })
-        .attr("cx", timeScale(min))
-        .attr("cy", timeScale(min))
+        .attr("class", function(d) { return "circle ano-"+d.year; })
+        .attr("cx", function(d) { return pathR.node().getPointAtLength(timeScale(d.date)).x; })
+        .attr("cy", function(d) { return pathR.node().getPointAtLength(timeScale(d.date)).y; })
         .on('mouseover', function(d) {
           d3.select('.text')
             .text(d.name+", "+d.year)
@@ -242,10 +241,16 @@
             .attr("r", circleRadius);
         });
 
-      circles.transition().duration(1500).delay(function(d, i) { return i*20; })
-        .attr("fill", color)
-        .attr("cx", function(d) { return d.x; })
-        .attr("cy", function(d) {return d.y; });
+      circles
+        // .transition()
+        // .duration(1000)
+        // .attr("cx", function(d) { return pathR.node().getPointAtLength(timeScale(d.date)).x; })
+        // .attr("cy", function(d) { return pathR.node().getPointAtLength(timeScale(d.date)).y; })
+        .transition()
+          .duration(500).delay(function(d, i) { return i*20; })
+          .attr("fill", color)
+          .attr("cx", function(d) { return d.x; })
+          .attr("cy", function(d) { return d.y; });
 
       g.append("text")
         .attr("stroke", "none")
